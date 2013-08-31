@@ -29,12 +29,19 @@ Double because NominalDiffTime represents exactly what I am using it for.
 
 > import Unsafe.Coerce
 
-> import Prelude hiding (id, (.))
 
+<pre>
 #ifdef WEIRD_NETWIRE_INSTANCES
+</pre>
+
 > import Data.String
 > import Text.ParserCombinators.ReadP
+
+<pre>
 #endif
+</pre>
+
+> import Prelude hiding (id, (.))
 
 Using the version of these from Control.Category. I'd love for Category to be in
 the Prelude, but I don't know if that will ever happen. Then again, it may be
@@ -184,7 +191,10 @@ ArrowZero and ArrowPlus instances), Bolt's Alternative combines.
 I'm not sure if I should copy netwire's weird instances like Num and Show, so
 I'll use CPP to include them conditionally.
 
+<pre>
 #ifdef WEIRD_NETWIRE_INSTANCES
+</pre>
+
 > instance (Applicative m, Num b) => Num (Bolt e m a b) where
 >   (+) = liftA2 (+)
 >   (-) = liftA2 (-)
@@ -228,11 +238,12 @@ I'll use CPP to include them conditionally.
 > instance (Applicative m, Monoid b) => Monoid (Bolt e m a b) where
 >   mempty = pure mempty
 >   mappend = liftA2 mappend
+
+<pre>
 #endif
+</pre>
 
 TODO:
-Modify (.) so that when the first Bolt fails, the second one still accounts for
-the time delta
-Similar for left and left'
+
 Prove ArrowApply and ArrowLoop instances obey the laws.
 
