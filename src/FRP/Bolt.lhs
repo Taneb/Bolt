@@ -20,7 +20,6 @@ haven't yet benchmarked it whatsoever.
 
 > import Data.Monoid
 > import Data.Profunctor
-> import Data.Profunctor.Unsafe
 
 > import Data.Time.Clock
 
@@ -152,8 +151,6 @@ constraints a tad, though...
 > instance Functor m => Profunctor (Bolt e m) where
 >   lmap f (Bolt bc) = Bolt $ \dt a -> second (lmap f) <$> bc dt (f a)
 >   rmap f (Bolt ab) = Bolt $ \dt a -> fmap (fmap f *** rmap f) $ ab dt a
->   (#.) _ = unsafeCoerce
->   bc .# _ = unsafeCoerce bc
 
 Not sure if the unsafe combinators have much point, but it could wind up being
 more efficient this way in some cases.
