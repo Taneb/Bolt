@@ -1,4 +1,3 @@
-> {-# LANGUAGE CPP #-}
 > module Bolt where
 
 Bolt is an FRP library heavily inspired by (i.e., completely stolen from) netwire.
@@ -20,25 +19,13 @@ haven't yet benchmarked it whatsoever.
 
 > import Data.Monoid
 > import Data.Profunctor
-
+> import Data.String
 > import Data.Time.Clock
 
 I use Data.Time.Clock.NominalDiffTime where netwire just uses a type synonym for
 Double because NominalDiffTime represents exactly what I am using it for.
 
-> import Unsafe.Coerce
-
-
-<pre>
-#ifdef WEIRD_NETWIRE_INSTANCES
-</pre>
-
-> import Data.String
 > import Text.ParserCombinators.ReadP
-
-<pre>
-#endif
-</pre>
 
 > import Prelude hiding (id, (.))
 
@@ -187,10 +174,7 @@ ArrowZero and ArrowPlus instances), Bolt's Alternative combines.
 
 I'm not sure if I should copy netwire's weird instances like Num and Show, so
 I'll use CPP to include them conditionally.
-
-<pre>
-#ifdef WEIRD_NETWIRE_INSTANCES
-</pre>
+EDIT: I've decided to roll with the weird instances. They don't do any harm.
 
 > instance (Applicative m, Num b) => Num (Bolt e m a b) where
 >   (+) = liftA2 (+)
@@ -235,10 +219,6 @@ I'll use CPP to include them conditionally.
 > instance (Applicative m, Monoid b) => Monoid (Bolt e m a b) where
 >   mempty = pure mempty
 >   mappend = liftA2 mappend
-
-<pre>
-#endif
-</pre>
 
 TODO:
 
