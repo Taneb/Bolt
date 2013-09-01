@@ -25,8 +25,6 @@ haven't yet benchmarked it whatsoever.
 I use Data.Time.Clock.NominalDiffTime where netwire just uses a type synonym for
 Double because NominalDiffTime represents exactly what I am using it for.
 
-> import Text.ParserCombinators.ReadP
-
 > import Prelude hiding (id, (.))
 
 Using the version of these from Control.Category. I'd love for Category to be in
@@ -214,7 +212,7 @@ EDIT: I've decided to roll with the weird instances. They don't do any harm.
 >   fromString = pure . fromString
 
 > instance (Applicative m, Read b) => Read (Bolt e m a b) where
->   readsPrec = readP_to_S . fmap pure . readS_to_P . readsPrec
+>   readsPrec i s = first pure <$> readsPrec i s
 
 > instance (Applicative m, Monoid b) => Monoid (Bolt e m a b) where
 >   mempty = pure mempty
