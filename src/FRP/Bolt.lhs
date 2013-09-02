@@ -17,6 +17,7 @@ haven't yet benchmarked it whatsoever.
 > import Control.Monad
 > import Control.Monad.Fix
 
+> import Data.Bifunctor.Apply (bilift2)
 > import Data.Monoid
 > import Data.Profunctor
 > import Data.String
@@ -24,6 +25,10 @@ haven't yet benchmarked it whatsoever.
 
 I use Data.Time.Clock.NominalDiffTime where netwire just uses a type synonym for
 Double because NominalDiffTime represents exactly what I am using it for.
+
+> import Linear
+
+We can define quite a few handy instances from Linear.
 
 > import Prelude hiding (id, (.))
 
@@ -174,6 +179,8 @@ I'm not sure if I should copy netwire's weird instances like Num and Show, so
 I'll use CPP to include them conditionally.
 EDIT: I've decided to roll with the weird instances. They don't do any harm.
 
+These instances are pretty much all trivial.
+
 > instance (Applicative m, Num b) => Num (Bolt e m a b) where
 >   (+) = liftA2 (+)
 >   (-) = liftA2 (-)
@@ -217,6 +224,21 @@ EDIT: I've decided to roll with the weird instances. They don't do any harm.
 > instance (Applicative m, Monoid b) => Monoid (Bolt e m a b) where
 >   mempty = pure mempty
 >   mappend = liftA2 mappend
+
+> instance (Applicative m, Monoid e) => Additive (Bolt e m a) where
+>   zero = pure 0
+>   (^+^) = liftA2 (+)
+>   (^-^) = liftA2 (-)
+>   liftU2 = unionWith
+>   liftI2 = liftA2
+
+> unionWith :: (Applicative m, Monoid e) => (b -> b -> b) -> Bolt e m a b -> Bolt e m a b -> Bolt e m a b
+> unionWith f (Bolt bb1) (Bolt bb2) = Bolt $ \dt a -> merge `bilift2` unionWith f <$> bb1 dt a <*> bb2 dt a
+>  where
+>   merge (Left e1) (Left e2) = Left $ mappend e1 e2
+>   merge (Left _) (Right b2) = Right b2
+>   merge (Right b1) (Left _) = Right b1
+>   merge (Right b1) (Right b2) = Right $ f b1 b2
 
 TODO:
 
